@@ -34,7 +34,8 @@ I have added the SQL querry where i have solved all this question.
 
 Made a interactive to get all Data insight in just one look.
 
-![Screenshot 2024-02-08 002659](https://github.com/NikhilPaliwal11/Namma-Yatri/assets/61961464/cd811a4d-e8e8-4997-ac03-ba9234d506bc)
+![Screenshot 2024-02-08 002659](https://github.com/NikhilPaliwal11/Namma-Yatri/assets/61961464/84925897-3796-4a85-8510-897cda4b0c15)
+
 
 Dashboard Show the count of completed trips , Searches, Estimates got quotes.
 

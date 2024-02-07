@@ -1,0 +1,443 @@
+
+-- Total Trips
+select * from trips_details
+select count(distinct tripid) As Total_trips from trips_details;
+
+-- Check for duplicates Value
+select tripid, count(tripid) As Cnt from trips_details
+Group by tripid
+having count(tripid) >1
+;
+--Ans (There are no null values)
+
+-- Q )To check for Total No of drivers
+select * from trips;
+select count(distinct driverid) As Total_drivers from trips;
+-- Ans (Total Number of driver is 30.
+
+-- Q ) Total Earnnings
+Select sum(fare) Total_earnings from trips
+-- Ans (Total earnings of driver is 751343)
+
+-- Q ) Total completed trips
+select count(tripid) as completed_trips from trips_details
+Where end_ride = 1;
+--Ans> Total completed trips - 983
+
+-- Q ) Total Searches 
+select sum(searches) from trips_details;
+-- Ans> total Searches 2161 
+
+-- Q ) Total Search Estimate
+select sum(searches_got_estimate) from trips_details;
+-- Ans> Total search Estimate is 1758
+
+-- Q ) Total Search Quotes
+select sum (searches_for_quotes) from trips_details;
+-- Ans > Total search Quotes is 1455
+
+-- Q ) Total Search which got Quotes
+select sum (searches_got_quotes) from trips_details;
+-- Ans > Total search Quotes is 1277
+
+-- Q ) Total trips driver cancelled
+select count(*) - sum(driver_not_cancelled) from trips_details;
+-- Ans > Total driver cancelled is 1021
+
+-- Q) Average distnace per trips
+select round(avg(distance),0) from trips;
+-- Ans > Average distnace per trips is 14
+
+-- Q) Average fare per trip
+select round(avg(fare),0) from trips;
+-- Ans > Average fare per trips is 764 
+
+--Q) Distance tralled 
+select sum(distance) from trips;
+-- Ans > Average distance travelled - 14148
+
+-- Q) Search to estimate rate
+select sum(searches_got_estimate)*100.0/sum(searches) from trips_details;
+
+-- Ans > About 81 percent of search got estimate and we can try to find out what happened to rest of 19 perent.
+ 
+-- Q) estimate to search for quote rates
+select sum(searches_for_quotes)*100.0/sum(searches_got_estimate) from trips_details;
+-- Ans > About 82 percent of people proceed to check for drivers.
+     
+-- Q) quote acceptance rate
+select sum(searches_got_quotes)*100.0/sum(searches_for_quotes) from trips_details;
+-- Ans > About 87 percent has got there respective drivers.
+
+--Q) booking cancellation rate
+select (count(*) - sum(driver_not_cancelled))*100.0/sum(searches_got_quotes) from trips_details;
+-- Ans > About 79 percent of booking request has been cancelled by the drivers.
+
+-- Q) From starting search to end trip
+select sum(end_ride)*100.0 / sum(searches) from trips_details;
+
+-- Ans > As we can see only 45 percent of trips been completed from starting till the trip end.
+
+--Q) Most used payment method
+select a.method from payment as a inner join 
+(select faremethod,count(distinct tripid) from trips
+group by faremethod
+order by count(distinct tripid) DESC
+ limit 1) as b
+ on a.id = b.faremethod;
+--Ans > Credit card is the most used payment method
+
+-- Q)the highest payment amount was made through which instrument
+select a.method from payment as a inner join 
+(select * from trips
+order by fare desc
+limit 1) as b
+on a.id = b.faremethod;
+--Ans > The highest ammount was paid through credit card
+
+
+-- Q )From which payment instrument the highest ammount was paid through out the entire day
+select a.method from payment as a inner join (
+select faremethod,sum(fare) from trips
+group by faremethod
+order by sum(fare) desc
+limit 1) as b 
+on a.id = b.faremethod;
+
+Ans > Credit card
+
+-- Q ) Which two location had the most trips
+select * from
+(select *,dense_rank() over(order by trip desc) as rank
+from
+(select loc_from,loc_to,count(distinct tripid) as trip from trips
+group by loc_from,loc_to))
+where rank =1;
+-- Ans > location 16 to 21 and location 35 to 5 has the highest number of trips whole day.
+
+-- Q) Top 5 earning drivers
+select * from
+(select * , dense_rank() over(order by fare desc) as rank
+from
+(select driverid , sum(fare) as fare from trips
+group by driverid))
+where rank <6 ;
+Ans > Top 5 earning driver id are (12,8,21,24,30).
+
+-- Q) Which duration had more trips
+select * from 
+(select * , dense_rank() over(order by cnt desc) as rank
+from
+(select duration , count(distinct tripid) as cnt from trips
+group by duration) as a)b
+where rank = 1;
+Ans > Duration 1 had more number of trips is 53 
+
+-- Q) Which driver and customer pair has more orders
+select * from
+(select *,dense_rank() over(order by  cnt desc) as rank
+from
+(select driverid , custid , count(distinct tripid) as cnt from trips
+ group by driverid,custid) as c) as d
+ where rank = 1;
+
+Ans > Driver id 17 and customer id 96 
+      Driver id 28 and cutomer id 15
+	  has most order pairs
+
+
+-- Q) which location got the highest number of trips in each duration 
+select * from
+(select *, rank() over(partition by duration order by cnt desc) as rank 
+from
+(select duration , loc_from , count(distinct tripid) as cnt from trips
+group by duration,loc_from) as a) as b
+where rank = 1;
+
+Ans > As we can see in Duration 1 we saw loc_from 20 has got the highest number of trips as number of trips is 4
+     similarly we can see in Duration 2 loc_from 9 has got the highest number of trips and number of trips is 5 
+	 and so on.
+
+-- Q) Which duration got the highest number of trips in each of the location 
+
+select * from
+(select *, rank() over(partition by loc_from order by cnt desc) as rank 
+from
+(select duration , loc_from , count(distinct tripid) as cnt from trips
+group by duration,loc_from) as a) as b
+where rank = 1;
+--Ans > As we can see in location 1 highest number of trips happened in duration 14
+	In locaton 2 highest number of trips happened in duration 7
+	and so on.
+	
+--Q ) Which area got highest fare
+
+select * from trips;
+select * from trips_details;
+
+select * from 
+(select * , rank() over(order by fare desc)as rank 
+from
+(select loc_from , sum(fare) as fare from trips
+group by loc_from ) as b ) as c
+where rank = 1;
+-- Ans > As we can see loc_from 6 has got highest amount of fare is 30295.
+
+-- Q ) Which Area got highest number of customer cancellation.
+select * from
+(select * , rank() over(order by can desc) as  rank
+from
+(select loc_from , count(*) - sum(customer_not_cancelled) as can
+from trips_details
+group by loc_from) as a) as b
+where rank = 1;
+-- Ans > Loc_from 4 has got the highest number of cancellation
+
+-- Q ) Which Area got highest number of driver cancellation.
+select * from
+(select * , rank() over(order by can desc) as  rank
+from
+(select loc_from , count(*) - sum(driver_not_cancelled) as can
+from trips_details
+group by loc_from) as a) as b
+where rank = 1;
+-- Ans > location 1 has got the highest number of driver cancellation
+
+-- Q ) Which duration got the highest trips.
+select * from
+(select *, rank() over(order by cnt desc) as rank
+from
+(select duration , count(distinct tripid) cnt from trips
+group by duration) as b) as c
+where rank = 1;
+-- Ans > Duratoin 1 has highest number of trips and count is 53
+
+-- Q ) Which duration got the highest trips.
+select * from
+(select *, rank() over(order by fare desc) as rank
+from
+(select duration , sum(fare) fare from trips
+group by duration) as b) as c
+where rank = 1;
+
+-- Ans > Duration 1 has highest ammount of fare is 45019.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

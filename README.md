@@ -33,7 +33,7 @@ Used SQL to do Exploratory Data Analysis question solved are:
 I have added the SQL querry where i have solved all this question.
 
 
-Made a interactive to get all Data insight in just one look.
+Made a interactive Dashboard to get all Data insight in just one look.
 
 ![Screenshot 2024-02-08 002659](https://github.com/NikhilPaliwal11/Namma-Yatri/assets/61961464/84925897-3796-4a85-8510-897cda4b0c15)
 

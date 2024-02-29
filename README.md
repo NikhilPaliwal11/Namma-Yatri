@@ -14,13 +14,13 @@ Used SQL to do Exploratory Data Analysis question solved are:
 
 • Most Used Payment method.
 
-• Which payment Instrument was used to pay hightest amount through the day.
+• Which payment Instrument was used to pay highest amount through the day.
 
 • Which 2 location had the most trips.
 
 • Who are the Top five earning drivers.
 
-• Which driver and custoner pair has more orders.
+• Which driver and customer pair has more orders.
 
 • which location got the highest number of trips in each duration.
 

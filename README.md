@@ -9,6 +9,7 @@ This is a sample dataset to get Valuable insight how the real world problem are 
 Used SQL to do Exploratory Data Analysis question solved are:
 
 • What is the Total number of Trips occured in Whole Day.
+
 • Checked for duplicates value in Data Set.
 
 • Most Used Payment method.
